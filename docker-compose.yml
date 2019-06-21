@@ -1,0 +1,66 @@
+﻿version: '3'
+networks:
+  internal:
+    driver: bridge
+services:
+  influxdb:
+    hostname: influxdb
+    container_name: influxdb
+    image: influxdb
+    networks:
+      - internal
+    volumes:
+      - f:\varken/influxdb/config:/var/lib/influxdb
+    restart: unless-stopped
+  varken:
+    hostname: varken
+    container_name: varken
+    image: boerderij/varken
+    networks:
+      - internal
+    volumes:
+      - f:\varken/config:/config
+    environment:
+      - PGID=911
+      - PUID=911
+      - TZ=Europe/Copenhagen
+    depends_on:
+      - influxdb
+      - tautulli
+    restart: unless-stopped
+  tautulli:     
+    hostname: tautulli     
+    container_name: tautulli
+    image: tautulli/tautulli
+    networks:
+      - internal
+    ports:       
+      - "8181:8181"     
+    environment:      
+      - PGID=1000      
+      - PUID=1000      
+      - TZ=Europe/Copenhagen     
+    volumes:       
+      - f:\varken/tautulli/config:/config     
+      - c:\Users/Mark Medum Bundgaard/AppData/Local/Plex Media Server/Logs:/plex_logs:ro
+    restart: always
+  grafana:
+    hostname: grafana
+    container_name: grafana
+    image: grafana/grafana
+    networks:
+      - internal
+    ports:
+      - 3000:3000
+    volumes: 
+      - f:\varken/grafana/config:/config
+    environment:
+      - GF_PATHS_DATA=/config/data
+      - GF_PATHS_LOGS=/config/logs
+      - GF_PATHS_PLUGINS=/config/plugins
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+    depends_on:
+      - influxdb
+      - tautulli
+      - varken
+    restart: unless-stopped
