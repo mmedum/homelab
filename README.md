@@ -19,3 +19,7 @@ docker-compose up tautulli -d
 ```
 docker-compose up -d
 ```
+
+## Auth
+
+It is important to have HTTP setup done in Tautulli, if not there will be full access to plex server through open tautulli.
