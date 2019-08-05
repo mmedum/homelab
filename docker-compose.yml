@@ -19,18 +19,16 @@ services:
       - web
       - internal
     ports:
-      - "80:80"     # The HTTP port
-      - "443:443"   # The HTTPS port
+      - "80:80"     
+      - "443:443"   
       - "8080:8080"
+    command: --acme.storage=/etc/traefik/acme.json \
+      --acme=${ACME_ENABLE} --acme.entrypoint=https \
+      --acme.httpchallenge --acme.httpchallenge.entrypoint=http \
+      --acme.email="${ACME_EMAIL}" --acme.onHostRule=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config/traefik.toml:/etc/traefik/traefik.toml
-      - ./config/acme.json:/acme.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.domain=${DOMAIN_NAME}"
-      - "traefik.frontend.rule=Host:${SUBDOMAIN_TRAEFIK}.${DOMAIN_NAME}"
-      - "traefik.port=8080"
     restart: always
 
   plex:
@@ -47,7 +45,8 @@ services:
     volumes:
       - ./plex/config:/config \
       - ./plex/transcode:/transcode \
-      - ./plex/data:/data
+      - ${PLEX_MOVIES1}:/data/movies1
+      - ${PLEX_MOVIES2}:/data/movies2
     labels:
       - "traefik.enable=true"
       - "traefik.backend=plex"

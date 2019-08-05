@@ -1,25 +1,18 @@
 # Plex Monitoring
 
 ## Setup
-Assuming folders
 
-- config
-- grafana
-- influxdb
-- tautulli
+- `config/traefik.toml` defines how traefik behavior
+- `docker-compose.yml` contains the traefik acme behavior
+- '''cp example.env .env` environment variables that is needed for running
 
-The *config* folder should contain the varken.ini file with the api-key from tautulli.
 
 ## Startup
 
 ```
-docker-compose up tautulli -d
+docker-compose up
 ```
 
-```
-docker-compose up -d
-```
-
-## Auth
+## Future notes
 
 It is important to have HTTP setup done in Tautulli, if not there will be full access to plex server through open tautulli.

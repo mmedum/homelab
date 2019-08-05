@@ -42,19 +42,6 @@ defaultEntryPoints = ["http", "https"]
       [entryPoints.https.tls]
 
 ################################################################
-# ACME
-################################################################
-
-[acme]
-email = "email"
-storage = "acme.json"
-entryPoint = "https"
-onHostRule = true
-onDemand = false
-[acme.httpChallenge]
-entryPoint = "http"
-
-################################################################
 # Traefik logs configuration
 ################################################################
 
