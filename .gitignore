@@ -1,4 +1,6 @@
 .env
 
+config/acme.json
+
 grafana
 plex
