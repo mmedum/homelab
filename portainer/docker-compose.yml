@@ -14,7 +14,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=portainer"
       - "traefik.frontend.rule=Host:${SUBDOMAIN_PORTAINER}.${DOMAIN_NAME}"
-      - "traefik.port=3000"
+      - "traefik.port=9000"
     restart: always
 
 networks:

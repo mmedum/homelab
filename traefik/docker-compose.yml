@@ -32,16 +32,10 @@ services:
       --acme.email="${ACME_EMAIL}" \
       --acme.entrypoint=https \
       --acme.dnsChallenge.provider="${DNS_PROVIDER}" \ 
-#      --acme.caServer="https://acme-staging-v02.api.letsencrypt.org/directory" \
       --acme.dnsChallenge.delayBeforeCheck=0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik.toml:/etc/traefik/traefik.toml
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.backend=traefik"
-#      - "traefik.frontend.rule=Host:${SUBDOMAIN_TRAEFIK}.${DOMAIN_NAME}"
-#      - "traefik.port=8080"
     restart: always
 
 networks:
