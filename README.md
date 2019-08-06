@@ -1,10 +1,16 @@
-# Plex Monitoring
+# Homelab setup
+
+## Containers
+
+- Traefik
+- Plex
+- Portainer
 
 ## Setup
 
 - `config/traefik.toml` defines how traefik behavior
 - `docker-compose.yml` contains the traefik acme behavior
-- '''cp example.env .env` environment variables that is needed for running
+- '''cp example.env .env''' environment variables that is needed for running
 
 
 ## Startup

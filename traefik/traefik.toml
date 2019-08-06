@@ -14,7 +14,7 @@
 # Optional
 # Default: "ERROR"
 #
-logLevel = "WARN"
+logLevel = "DEBUG"
 
 # Entrypoints to be used by frontends that do not specify any entrypoint.
 # Each frontend can specify its own entrypoints.

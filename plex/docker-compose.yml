@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  plex:
+    hostname: plex
+    container_name: plex
+    image: plexinc/pms-docker
+    networks:
+      - web
+    environment:
+      - PLEX_CLAIM=${PLEX_TOKEN}
+      - PLEX_UID=${USER_ID}
+      - PLEX_GID=${GROUP_ID}
+      - TZ=${TZ}
+    volumes:
+      - ./plex/config:/config \
+      - ./plex/transcode:/transcode \
+      - ${PLEX_MOVIES1}:/data/movies1
+      - ${PLEX_MOVIES2}:/data/movies2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=plex"
+      - "traefik.frontend.rule=Host:${SUBDOMAIN_PLEX}.${DOMAIN_NAME}"
+      - "traefik.port=32400"
+      - "traefik.protocol=http"
+
+networks:
+  internal:
+    driver: bridge
+  web:
+    external: true

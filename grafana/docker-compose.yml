@@ -1,0 +1,30 @@
+version: "3"
+
+services: 
+  grafana:
+    hostname: grafana
+    container_name: grafana
+    image: grafana/grafana
+    networks:
+      - web
+    ports:
+      - "3000:3000"
+    volumes: 
+      - ./grafana:/config
+    environment:
+      - GF_PATHS_DATA=/config/data
+      - GF_PATHS_LOGS=/config/logs
+      - GF_PATHS_PLUGINS=/config/plugins
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=grafana"
+      - "traefik.frontend.rule=Host:${SUBDOMAIN_GRAFANA}.${DOMAIN_NAME}"
+      - "traefik.port=3000"
+    restart: always
+
+networks:
+  internal:
+    driver: bridge
+  web:
+    external: true

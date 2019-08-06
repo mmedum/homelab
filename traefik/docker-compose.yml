@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  watchtower:
+    hostname: watchtower
+    container_name: watchtower
+    image: v2tec/watchtower
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+  traefik:
+    hostname: traefik
+    container_name: traefik
+    image: traefik
+    networks:
+      - web
+      - internal
+    ports:
+      - "80:80"     
+      - "443:443"   
+      - "8080:8080"
+    environment:
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_API_KEY=${CLOUDFLARE_EMAIL}
+    command: --acme.storage=/etc/traefik/acme.json \
+      --acme=${ACME_ENABLE} \
+      --acme.email="${ACME_EMAIL}" \
+      --acme.entrypoint=https \
+      --acme.dnsChallenge.provider="${DNS_PROVIDER}" \ 
+#      --acme.caServer="https://acme-staging-v02.api.letsencrypt.org/directory" \
+      --acme.dnsChallenge.delayBeforeCheck=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/etc/traefik/traefik.toml
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.backend=traefik"
+#      - "traefik.frontend.rule=Host:${SUBDOMAIN_TRAEFIK}.${DOMAIN_NAME}"
+#      - "traefik.port=8080"
+    restart: always
+
+networks:
+  internal:
+    driver: bridge
+  web:
+    external: true
