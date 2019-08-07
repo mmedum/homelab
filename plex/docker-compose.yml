@@ -28,9 +28,9 @@ services:
       - "traefik.frontend.rule=Host:${SUBDOMAIN_PLEX}.${DOMAIN_NAME}"
       - "traefik.port=32400"
       - "traefik.protocol=http"
+    restart: always
+
 
 networks:
-  internal:
-    driver: bridge
   web:
     external: true
