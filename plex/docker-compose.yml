@@ -13,15 +13,8 @@ services:
       - PLEX_GID=${GROUP_ID}
       - TZ=${TZ}
     volumes:
-      - ./plex/config:/config \
-      - ./plex/transcode:/transcode \
-      - ${PLEX_MOVIES1}:/data/movies1
-      - ${PLEX_MOVIES2}:/data/movies2
-      - ${PLEX_MOVIES3}:/data/movies3
-      - ${PLEX_MOVIES4}:/data/movies4
-      - ${PLEX_MOVIES5}:/data/movies5
-      - ${PLEX_TVSHOWS1}:/data/tvshows
-      - ${PLEX_ANIME1}:/data/anime/tvshows
+      - $PWD/plex/config:/config \
+      - $PWD/plex/transcode:/transcode \
     labels:
       - "traefik.enable=true"
       - "traefik.backend=plex"

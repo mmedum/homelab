@@ -9,7 +9,7 @@ services:
       - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - C:\ProgramData\Portainer:/data
+      - $PWD/portainer:/data
     labels:
       - "traefik.enable=true"
       - "traefik.backend=portainer"

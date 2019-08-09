@@ -27,15 +27,13 @@ services:
       - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
       - CF_API_KEY=${CLOUDFLARE_EMAIL}
-    command: --acme.storage=/etc/traefik/acme.json \
-      --acme=${ACME_ENABLE} \
-      --acme.email="${ACME_EMAIL}" \
-      --acme.entrypoint=https \
+    command: --acme.email="${ACME_EMAIL}" \
       --acme.dnsChallenge.provider="${DNS_PROVIDER}" \ 
       --acme.dnsChallenge.delayBeforeCheck=0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.toml:/etc/traefik/traefik.toml
+      - $PWD/traefik.toml:/etc/traefik/traefik.toml
+      - $PWD/acme.json:/acme.json
     restart: always
 
 networks:
