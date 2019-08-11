@@ -12,10 +12,12 @@ services:
       - PLEX_UID=${USER_ID}
       - PLEX_GID=${GROUP_ID}
       - TZ=${TZ}
+      - ADVERTISE_IP=https://${SUBDOMAIN_PLEX}.${DOMAIN_NAME}:443
     volumes:
       - /mnt/configs/plex/config:/config
       - /mnt/configs/plex/transcode:/transcode
       - ${PLEX_TVSHOWS1}:/data/tvshows
+      - ${PLEX_ANIME1}:/data/anime
     labels:
       - "traefik.enable=true"
       - "traefik.backend=plex"

@@ -23,10 +23,7 @@ services:
       - "443:443"   
       - "8080:8080"
     environment:
-      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
-      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
-      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
-      - CF_API_KEY=${CLOUDFLARE_EMAIL}
+      - DUCKDNS_TOKEN=${TOKEN}
     command: --acme.email="${ACME_EMAIL}" \
       --acme.dnsChallenge.provider="${DNS_PROVIDER}" \ 
       --acme.dnsChallenge.delayBeforeCheck=0
@@ -34,6 +31,16 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - $PWD/traefik.toml:/etc/traefik/traefik.toml
       - $PWD/acme.json:/acme.json
+    restart: always
+
+  duckdns:
+    hostname: duckdns
+    container_name: duckdns
+    image: linuxserver/duckdns
+    environment:
+      - TZ=${TZ}
+      - SUBDOMAINS=${DOMAIN_NAME}
+      - TOKEN=${TOKEN}
     restart: always
 
 networks:
