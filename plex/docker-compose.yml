@@ -13,16 +13,58 @@ services:
       - PLEX_GID=${GROUP_ID}
       - TZ=${TZ}
     volumes:
-      - $PWD/plex/config:/config \
-      - $PWD/plex/transcode:/transcode \
+      - /mnt/configs/plex/config:/config
+      - /mnt/configs/plex/transcode:/transcode
+      - ${PLEX_TVSHOWS1}:/data/tvshows
     labels:
       - "traefik.enable=true"
       - "traefik.backend=plex"
       - "traefik.frontend.rule=Host:${SUBDOMAIN_PLEX}.${DOMAIN_NAME}"
       - "traefik.port=32400"
-      - "traefik.protocol=http"
     restart: always
 
+  ombi:
+    hostname: ombi
+    container_name: ombi
+    image: linuxserver/ombi
+    networks:
+      - web
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TZ}
+    volumes:
+      - /mnt/configs/ombi/config:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=ombi"
+      - "traefik.frontend.rule=Host:${SUBDOMAIN_OMBI}.${DOMAIN_NAME}"
+      - "traefik.port=3579"
+    depends_on:
+      - plex
+    restart: always
+
+  tautulli:
+    hostname: tautulli
+    container_name: tautulli
+    image: tautulli/tautulli
+    networks:
+      - web
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TZ}
+    volumes:
+      - /mnt/configs/tautulli/config:/config
+      - /mnt/configs/plex/config/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=tautulli"
+      - "traefik.frontend.rule=Host:${SUBDOMAIN_TAUTULLI}.${DOMAIN_NAME}"
+      - 'traefik.port=8181'
+    depends_on:
+      - plex
+    restart: always
 
 networks:
   web:

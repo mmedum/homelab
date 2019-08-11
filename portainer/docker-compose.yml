@@ -9,7 +9,7 @@ services:
       - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/portainer:/data
+      - /mnt/configs/portainer/data:/data
     labels:
       - "traefik.enable=true"
       - "traefik.backend=portainer"
@@ -18,7 +18,5 @@ services:
     restart: always
 
 networks:
-  internal:
-    driver: bridge
   web:
     external: true
