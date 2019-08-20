@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  resilio-sync:
+    hostname: resilio
+    container_name: resilio
+    image: linuxserver/resilio-sync
+    networks:
+      - internal
+    ports:
+      - "8888:8888"
+      - "55555:55555"
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+    volumes:
+      - /mnt/configs/resilio/config:/config
+      - ${ROOT_PATH}:/sync
+      - ${DOWNLOADS_PATH}:/downloads
+    restart: always
+
+networks:
+  internal:
+    driver: bridge

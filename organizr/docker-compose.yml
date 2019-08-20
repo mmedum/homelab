@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  organizr:
+    hostname: organizr
+    container_name: organizr
+    image: organizrtools/organizr-v2
+    networks:
+      - web
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+    volumes:
+      - /mnt/configs/organizr/config:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=organizr"
+      - "traefik.frontend.rule=Host:${SUBDOMAIN_ORGANIZR}.${DOMAIN_NAME}"
+    restart: always
+
+networks:
+  web:
+    external: true
