@@ -14,7 +14,7 @@ services:
   traefik:
     hostname: traefik
     container_name: traefik
-    image: traefik
+    image: traefik:1.7.16
     networks:
       - web
       - internal
