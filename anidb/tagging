@@ -1,0 +1,88 @@
+################################################################################################################
+#                                                                                                              #
+# AniDB Client TagSystem Rules for XBMC AniDB.net Scraper [MOD]                                                #
+#                                                                                                              #
+# Version: 1.1.0                                                                                               #
+# Author:  ScudLee                                                                                             #
+# Link:    http://forum.xbmc.org/showthread.php?tid=142835                                                     #
+#                                                                                                              #
+################################################################################################################
+
+BaseTVShowPath:="/mnt/storage7/anime/new/tvshows/"                       #Set to your root folder for anime TV shows
+BaseMoviePath:="/mnt/storage7/anime/new/movies/"                          #Set to your root folder for anime movies
+
+#################################################### TITLES ####################################################
+#                                                                                                              #
+ShowTitle:=[%ATr%, %ATe%, %ATk%]                           #Show title:    Romaji > English > Kanji            #
+EpisodeTitle:=[%ETe%, %ETr%, %ETk%]                        #Episode title: English > Romaji > Kanji            #
+#                                                                                                              #
+ShowTitle:=$repl(%ShowTitle%, "\?|\s*\.+$", "_")           #Replace these symbols with an underscore           #
+#                                                          #-to distingush certain follow-up seasons           #
+ShowTitle:=$repl(%ShowTitle%, '[\\":/*|<>?]', " ")         #Replace illegal characters with a                  #
+EpisodeTitle:=$repl(%EpisodeTitle%, '[\\":/*|<>?]', " ")   #space to preserve word boundaries                  #
+ShowTitle:=$repl(%ShowTitle%, "\s+", " ")                  #and then reduce multiple                           #
+EpisodeTitle:=$repl(%EpisodeTitle%, "\s+", " ")            #spaces to a single space                           #
+ShowTitle:=$repl(%ShowTitle%, "^\s|\s$", "")               #and then get rid of any                            #
+EpisodeTitle:=$repl(%EpisodeTitle%, "^\s|\s$", "")         #leading or ending space                            #
+#                                                                                                              #
+ShowTitle:=$repl(%ShowTitle%, "`", "'")                    #Replace any                                        #
+EpisodeTitle:=$repl(%EpisodeTitle%, "`", "'")              #apostrophes                                        #
+#                                                                                                              #
+Trunc(str, len):=$repl(%str%, ".{" $len($repl(%str%, "(.?){" %len% "}$", "")) "}$", "")                        #
+TruncEllipse(str, len):={$len(%str%) = $len($Trunc(%str%, %len%)) ? %str% : $Trunc(%str%, %len%) "…" }         #
+#                                                                                                              #
+EpisodeTitle:=$TruncEllipse(%EpisodeTitle%, "64")          #Trim long episode titles                           #
+#                                                                                                              #
+################################################ EPISODE NUMBER ################################################
+#                                                                                                              #
+Regular:=""                                                #These require a pair of custom                     #
+Special:="S"         #(Frodo only)                         #tvshowmatching regexps to work                     #
+Separator:=" - "                                           #plus also a matching separator                     #
+#                                                                                                              #
+#Regular:="S01E"     #Regular:="1x"     #Regular:="ep"     #These should just work                             #
+#Special:="S00E"     #Special:="0x"                        #without adding regexps                             #
+#Separator:=" "                                            #or a special separator                             #
+#                                                                                                              #
+SpecialEp:=$repl(%EpNo%, "[1234567890]", "")                                                                   #
+EpNo:=$repl(%EpNo%, "[SCTPO]", "")                                                                             #
+Ver:={%Ver% = "1" ? "" : "v" %Ver% }                                                                           #
+#                                                                                                              #
+Pad:={%SpecialEp% ? "2" : $max($len(%EpHiNo%), $len(%EpCount%)) }                                              #
+Pad:={$match(%EpCount%, "0") ? $max("2", %Pad%) : %Pad% }                                                      #
+EpNoPad:=$pad(%EpNo%, %Pad%, "0")                                                                              #
+#                                                                                                              #
+EpNoPad:={%SpecialEp%       ? %EpNoPad%  :  %Regular%   %EpNoPad% }  #01+        Regular episodes              #
+EpNoPad:={%SpecialEp% = "S" ? %Special%     %EpNoPad% : %EpNoPad% }  #S01-S99    Special episodes              #
+EpNoPad:={%SpecialEp% = "C" ? %Special% "1" %EpNoPad% : %EpNoPad% }  #S101-S199  OPs/EDs                       #
+EpNoPad:={%SpecialEp% = "T" ? %Special% "2" %EpNoPad% : %EpNoPad% }  #S201-S299  Trailers                      #
+EpNoPad:={%SpecialEp% = "P" ? %Special% "3" %EpNoPad% : %EpNoPad% }  #S301-S399  Parodies                      #
+EpNoPad:={%SpecialEp% = "O" ? %Special% "4" %EpNoPad% : %EpNoPad% }  #S401-S499  Other                         #
+#                                                                                                              #
+EpNoFull:=%Separator% %EpNoPad% %Ver% %Separator%                                                              #
+#                                                                                                              #
+############################################### FILE INFORMATION ###############################################
+#                                                                                                              #
+GT:="[" [%GTs%, %GTl%] "]"                                 #Group name e.g. [a.f.k.]                           #
+Src:="[" $repl(%Source%, "Blu-ray", "BluRay") "]"          #Source e.g. [HDTV]                                 #
+Cen:={%Cen% ? "[Cen]" : "" }                               #Censored  e.g. [Cen]                               #
+Res:="[" %FVideoRes% "]"                                   #Resolution e.g. [1280x720]                         #
+VCodec:="[" $repl(%FVCodec%,"H264/AVC","h264") "]"         #Video codec e.g. [h264]                            #
+ACodec:="[" %FACodec% "]"                                  #Audio codec e.g. [AC3]                             #
+CRC:="[" $uc(%FCrc%) "]"                                   #CRC e.g. [ABCD1234]                                #
+#                                                                                                              #
+FileInfo:=" "        #Arrange to your preference                         #
+#                                                                                                              #
+############################################## FILE NAME AND PATH ##############################################
+#                                                                                                              #
+MovieTypes:="Movie|OVA"                                    #Could also include TV Special                      #
+IsMovie:={$match(%Type%, %MovieTypes%) ? {%EpCount% = "1" ? {%SpecialEp% ? "" : "1" } : "" } : "" }            #
+#                                                                                                              #
+MovieFileName:=%ShowTitle% %FileInfo%                                                                          #
+TVShowFileName:=%ShowTitle% %EpNoFull% %EpisodeTitle% %FileInfo%                                               #
+#                                                                                                              #
+BasePath:={%IsMovie% ? %BaseMoviePath% : %BaseTVShowPath% }                                                    #
+#                                                                                                              #
+FileName:={%IsMovie% ? %MovieFileName% : %TVShowFileName% }                                                    #
+PathName:=%BasePath% %ShowTitle%                                                                               #
+#                                                                                                              #
+################################################################################################################
