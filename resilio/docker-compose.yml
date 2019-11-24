@@ -6,7 +6,7 @@ services:
     container_name: resilio
     image: linuxserver/resilio-sync
     networks:
-      - internal
+      - web
     ports:
       - "8888:8888"
       - "55555:55555"
@@ -15,6 +15,19 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TZ}
       - UMASK_SET=022
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.resilio.entrypoints=web"
+      - "traefik.http.routers.resilio.rule=Host(`${SUBDOMAIN_RESILIO}.${DOMAIN_NAME}`)"
+      - "traefik.http.middlewares.resilio-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.resilio.middlewares=resilio-https-redirect"
+      - "traefik.http.routers.resilio-secure.entrypoints=web-secure"
+      - "traefik.http.routers.resilio-secure.rule=Host(`${SUBDOMAIN_RESILIO}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.resilio-secure.tls=true"
+      - "traefik.http.routers.resilio-secure.tls.certresolver=default"
+      - "traefik.http.routers.resilio-secure.service=resilio"
+      - "traefik.http.services.resilio.loadbalancer.server.port=8888"
+      - "traefik.docker.network=web"
     volumes:
       - /mnt/configs/resilio/config:/config
       - ${ROOT_PATH}:/sync
@@ -22,5 +35,5 @@ services:
     restart: always
 
 networks:
-  internal:
-    driver: bridge
+  web:
+    external: true

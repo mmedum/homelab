@@ -26,9 +26,17 @@ services:
       - ${PLEX_ANIME1}:/data/anime
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=plex"
-      - "traefik.frontend.rule=Host:${SUBDOMAIN_PLEX}.${DOMAIN_NAME}"
-      - "traefik.port=32400"
+      - "traefik.http.routers.plex.entrypoints=web"
+      - "traefik.http.routers.plex.rule=Host(`${SUBDOMAIN_PLEX}.${DOMAIN_NAME}`)"
+      - "traefik.http.middlewares.plex-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.plex.middlewares=plex-https-redirect"
+      - "traefik.http.routers.plex-secure.entrypoints=web-secure"
+      - "traefik.http.routers.plex-secure.rule=Host(`${SUBDOMAIN_PLEX}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.plex-secure.tls=true"
+      - "traefik.http.routers.plex-secure.tls.certresolver=default"
+      - "traefik.http.routers.plex-secure.service=plex"
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+      - "traefik.docker.network=web"
     restart: always
 
   ombi:
@@ -45,9 +53,17 @@ services:
       - /mnt/configs/ombi/config:/config
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=ombi"
-      - "traefik.frontend.rule=Host:${SUBDOMAIN_OMBI}.${DOMAIN_NAME}"
-      - "traefik.port=3579"
+      - "traefik.http.routers.ombi.entrypoints=web"
+      - "traefik.http.routers.ombi.rule=Host(`${SUBDOMAIN_OMBI}.${DOMAIN_NAME}`)"
+      - "traefik.http.middlewares.ombi-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.ombi.middlewares=ombi-https-redirect"
+      - "traefik.http.routers.ombi-secure.entrypoints=web-secure"
+      - "traefik.http.routers.ombi-secure.rule=Host(`${SUBDOMAIN_OMBI}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.ombi-secure.tls=true"
+      - "traefik.http.routers.ombi-secure.tls.certresolver=default"
+      - "traefik.http.routers.ombi-secure.service=ombi"
+      - "traefik.http.services.ombi.loadbalancer.server.port=3579"
+      - "traefik.docker.network=web"
     depends_on:
       - plex
     restart: always
@@ -67,9 +83,17 @@ services:
       - /mnt/configs/plex/config/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=tautulli"
-      - "traefik.frontend.rule=Host:${SUBDOMAIN_TAUTULLI}.${DOMAIN_NAME}"
-      - 'traefik.port=8181'
+      - "traefik.http.routers.tautulli.entrypoints=web"
+      - "traefik.http.routers.tautulli.rule=Host(`${SUBDOMAIN_TAUTULLI}.${DOMAIN_NAME}`)"
+      - "traefik.http.middlewares.tautulli-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.tautulli.middlewares=tautulli-https-redirect"
+      - "traefik.http.routers.tautulli-secure.entrypoints=web-secure"
+      - "traefik.http.routers.tautulli-secure.rule=Host(`${SUBDOMAIN_TAUTULLI}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.tautulli-secure.tls=true"
+      - "traefik.http.routers.tautulli-secure.tls.certresolver=default"
+      - "traefik.http.routers.tautulli-secure.service=tautulli"
+      - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+      - "traefik.docker.network=web"
     depends_on:
       - plex
     restart: always

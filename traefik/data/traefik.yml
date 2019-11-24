@@ -1,0 +1,30 @@
+api:
+  dashboard: true
+  debug: true
+
+log:
+  level: "DEBUG"
+
+entryPoints:
+  web:
+    address: ":80"
+  web-secure:
+    address: ":443"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+certificatesResolvers:
+  default:
+    acme:
+      email: "email@example.com"
+      storage: "acme.json"
+      dnsChallenge:
+        provider: "duckdns"
+        delayBeforeCheck: 0
+
+metrics:
+  prometheus:
+    entryPoint: "metrics"

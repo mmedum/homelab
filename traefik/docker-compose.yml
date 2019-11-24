@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   watchtower:
@@ -14,7 +14,7 @@ services:
   traefik:
     hostname: traefik
     container_name: traefik
-    image: traefik:1.7.16
+    image: traefik:latest
     networks:
       - web
       - internal
@@ -24,13 +24,26 @@ services:
       - "8080:8080"
     environment:
       - DUCKDNS_TOKEN=${TOKEN}
-    command: --acme.email="${ACME_EMAIL}" \
-      --acme.dnsChallenge.provider="${DNS_PROVIDER}" \ 
-      --acme.dnsChallenge.delayBeforeCheck=0
+      - TZ=${TZ}
+    command: 
+      - "--certificatesresolvers.default.acme.email=${ACME_EMAIL}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.rule=Host(`${SUBDOMAIN_TRAEFIK}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.traefik-secure.entrypoints=web-secure"
+      - "traefik.http.routers.traefik-secure.rule=Host(`${SUBDOMAIN_TRAEFIK}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=default"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/traefik.toml:/etc/traefik/traefik.toml
-      - $PWD/acme.json:/acme.json
+      - $PWD/data/traefik.yml:/traefik.yml
+      - $PWD/data/acme.json:/acme.json
     restart: always
 
   duckdns:

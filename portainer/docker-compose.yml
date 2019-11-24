@@ -7,14 +7,24 @@ services:
     image: portainer/portainer
     networks:
       - web
+    environment:
+      - TZ=${TZ}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /mnt/configs/portainer/data:/data
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=portainer"
-      - "traefik.frontend.rule=Host:${SUBDOMAIN_PORTAINER}.${DOMAIN_NAME}"
-      - "traefik.port=9000"
+      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.routers.portainer.rule=Host(`${SUBDOMAIN_PORTAINER}.${DOMAIN_NAME}`)"
+      - "traefik.http.middlewares.portainer-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.portainer.middlewares=portainer-https-redirect"
+      - "traefik.http.routers.portainer-secure.entrypoints=web-secure"
+      - "traefik.http.routers.portainer-secure.rule=Host(`${SUBDOMAIN_PORTAINER}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.portainer-secure.tls=true"
+      - "traefik.http.routers.portainer-secure.tls.certresolver=default"
+      - "traefik.http.routers.portainer-secure.service=portainer"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.docker.network=web"
     restart: always
 
 networks:
