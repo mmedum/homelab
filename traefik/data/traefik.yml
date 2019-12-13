@@ -26,5 +26,4 @@ certificatesResolvers:
         delayBeforeCheck: 0
 
 metrics:
-  prometheus:
-    entryPoint: "metrics"
+  prometheus: {}
