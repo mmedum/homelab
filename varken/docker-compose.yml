@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  varken:
+    hostname: varken
+    container_name: varken
+    image: boerderij/varken
+    networks:
+      - internal
+    volumes:
+      - $PWD/configs:/config
+    environment:
+      - TZ=${TZ}
+      - VRKN_GLOBAL_TAUTULLI_SERVER_IDS=1
+      - VRKN_GLOBAL_OMBI_SERVER_IDS=1
+      - VRKN_INFLUXDB_URL=${INFLUXDB_URL}
+      - VRKN_INFLUXDB_PORT=8086
+      - VRKN_INFLUXDB_SSL=false
+      - VRKN_INFLUXDB_VERIFY_SSL=false
+      - VRKN_INFLUXDB_USERNAME=${INFLUXDB_USER}
+      - VRKN_INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+      - VRKN_TAUTULLI_1_URL=${TAUTULLI_URL}
+      - VRKN_TAUTULLI_1_FALLBACK_IP=1.1.1.1
+      - VRKN_TAUTULLI_1_APIKEY=${TAUTULLI_API_KEY}
+      - VRKN_TAUTULLI_1_SSL=false
+      - VRKN_TAUTULLI_1_VERIFY_SSL=false
+      - VRKN_TAUTULLI_1_GET_ACTIVITY=true
+      - VRKN_TAUTULLI_1_GET_ACTIVITY_RUN_SECONDS=30
+      - VRKN_TAUTULLI_1_GET_STATS=true
+      - VRKN_TAUTULLI_1_GET_STATS_RUN_SECONDS=3600
+      - VRKN_OMBI_1_URL=${OMBI_URL}
+      - VRKN_OMBI_1_APIKEY=${OMBI_API_KEY}
+      - VRKN_OMBI_1_SSL=false
+      - VRKN_OMBI_1_VERIFY_SSL=false
+      - VRKN_OMBI_1_GET_REQUEST_TYPE_COUNTS=true
+      - VRKN_OMBI_1_REQUEST_TYPE_RUN_SECONDS=300
+      - VRKN_OMBI_1_GET_REQUEST_TOTAL_COUNTS=true
+      - VRKN_OMBI_1_REQUEST_TOTAL_RUN_SECONDS=300
+      - VRKN_OMBI_1_GET_ISSUE_STATUS_COUNTS=true
+      - VRKN_OMBI_1_ISSUE_STATUS_RUN_SECONDS=300
+    restart: always
+
+networks:
+  internal:
+    driver: bridge
