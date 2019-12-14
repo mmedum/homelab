@@ -6,6 +6,7 @@ services:
     container_name: grafana
     image: grafana/grafana:latest
     networks:
+      - internal
       - web
     environment:
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel,natel-discrete-panel
@@ -31,5 +32,7 @@ volumes:
   grafana-storage:
 
 networks:
+  internal:
+    driver: bridge
   web:
     external: true

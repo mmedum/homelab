@@ -5,8 +5,10 @@ services:
     hostname: influxdb
     container_name: influxdb
     image: influxdb
-    networks:
-      - internal
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
     environment:
       - INFLUXDB_DB=${INFLUXDB_DB}
       - INFLUXDB_ADMIN_USER=${INFLUXDB_ADMIN_USER}
@@ -19,7 +21,3 @@ services:
 
 volumes:
   influxdb-storage:
-
-networks:
-  internal:
-    driver: bridge
