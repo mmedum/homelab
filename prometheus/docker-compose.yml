@@ -6,6 +6,7 @@ services:
     container_name: prometheus
     image: prom/prometheus:latest
     networks:
+      - internal
       - web
     labels:
       - "traefik.enable=true"
