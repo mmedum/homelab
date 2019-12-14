@@ -21,6 +21,11 @@ scrape_configs:
     static_configs:
       - targets: ['192.168.1.231:9323']
 
+  - job_name: 'unifi'
+
+    static_configs:
+      - targets: ['192.168.1.231:9130']
+
   - job_name: 'node-exporter'
 
     static_configs:
