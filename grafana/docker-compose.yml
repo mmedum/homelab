@@ -4,27 +4,31 @@ services:
   grafana:
     hostname: grafana
     container_name: grafana
-    image: grafana/grafana
+    image: grafana/grafana:latest
     networks:
       - web
-    ports:
-      - "3000:3000"
-    volumes: 
-      - /mnt/configs/grafana/config:/config
     environment:
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
     volumes:
-      - grafana-volume:/var/lib/grafana
+      - "grafana-storage:/var/lib/grafana"
+      - $PWD/configs/grafana.ini:/etc/grafana/grafana.ini
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=grafana"
-      - "traefik.frontend.rule=Host:${SUBDOMAIN_GRAFANA}.${DOMAIN_NAME}"
-      - "traefik.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=web"
+      - "traefik.http.routers.grafana.rule=Host(`${SUBDOMAIN_GRAFANA}.${DOMAIN_NAME}`)"
+      - "traefik.http.middlewares.grafana-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.grafana.middlewares=grafana-https-redirect"
+      - "traefik.http.routers.grafana-secure.entrypoints=web-secure"
+      - "traefik.http.routers.grafana-secure.rule=Host(`${SUBDOMAIN_GRAFANA}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.grafana-secure.tls=true"
+      - "traefik.http.routers.grafana-secure.tls.certresolver=default"
+      - "traefik.http.routers.grafana-secure.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=web"
     restart: always
 
 volumes:
-  grafana-volume:
-    external: true
+  grafana-storage:
 
 networks:
   web:
