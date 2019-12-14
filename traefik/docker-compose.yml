@@ -19,8 +19,8 @@ services:
       - web
       - internal
     ports:
-      - "80:80"     
-      - "443:443"   
+      - "80:80"
+      - "443:443"
       - "8080:8080"
     environment:
       - DUCKDNS_TOKEN=${TOKEN}
