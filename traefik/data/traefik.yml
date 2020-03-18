@@ -3,7 +3,7 @@ api:
   debug: true
 
 log:
-  level: "DEBUG"
+  level: "WARN"
 
 entryPoints:
   web:
@@ -19,7 +19,6 @@ providers:
 certificatesResolvers:
   default:
     acme:
-      email: "email@example.com"
       storage: "acme.json"
       dnsChallenge:
         provider: "duckdns"
@@ -27,3 +26,6 @@ certificatesResolvers:
 
 metrics:
   prometheus: {}
+
+tracing:
+  jaeger: {}

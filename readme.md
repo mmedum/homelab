@@ -8,7 +8,7 @@
 
 ## Setup
 
-- `config/traefik.toml` defines how traefik behavior
+- `config/traefik.toml` defines how traefik behaves
 - `docker-compose.yml` contains the traefik acme behavior
 - '''cp example.env .env''' environment variables that is needed for running
 
