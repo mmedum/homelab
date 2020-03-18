@@ -14,6 +14,8 @@ services:
       - PLEX_GID=${GROUP_ID}
       - TZ=${TZ}
       - ADVERTISE_IP=https://${SUBDOMAIN_PLEX}.${DOMAIN_NAME}:443
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - /mnt/configs/plex/config:/config
       - /mnt/configs/plex/transcode:/transcode
