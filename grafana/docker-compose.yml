@@ -10,6 +10,8 @@ services:
       - web
     environment:
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel,natel-discrete-panel
+      - GF_RENDERING_SERVER_URL=http://grafana-image-renderer:8081/render
+      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
     volumes:
       - "grafana-storage:/var/lib/grafana"
       - $PWD/configs/grafana.ini:/etc/grafana/grafana.ini
@@ -26,6 +28,34 @@ services:
       - "traefik.http.routers.grafana-secure.service=grafana"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.docker.network=web"
+    restart: always
+
+  renderer:
+    hostname: grafana-image-renderer
+    container_name: grafana-image-renderer
+    image: grafana/grafana-image-renderer:latest
+    networks:
+     - internal
+    restart: always
+
+  loki:
+    hostname: loki
+    container_name: loki
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - internal
+    restart: always
+
+  promtail:
+    hostname: promtail
+    container_name: promtail
+    image: grafana/promtail:latest
+    volumes:
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/docker-config.yaml
+    networks:
+      - internal
     restart: always
 
 volumes:
