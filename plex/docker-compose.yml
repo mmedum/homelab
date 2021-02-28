@@ -9,6 +9,8 @@ services:
       - internal
       - web
     environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_DRIVER_CAPABILITIES=all
       - PLEX_CLAIM=${PLEX_TOKEN}
       - PLEX_UID=${USER_ID}
       - PLEX_GID=${GROUP_ID}
@@ -16,17 +18,26 @@ services:
       - ADVERTISE_IP=https://${PLEX_IP}:32400,https://${SUBDOMAIN_PLEX}.${DOMAIN_NAME}:443
     devices:
       - /dev/dri:/dev/dri
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
     volumes:
-      - /mnt/configs/plex/config:/config
-      - /mnt/configs/plex/transcode:/transcode
+      - /media/cache/plex/config:/config
+      - /media/cache/plex/transcode:/transcode
       - ${PLEX_MOVIES1}:/data/movies1
       - ${PLEX_MOVIES2}:/data/movies2
       - ${PLEX_MOVIES3}:/data/movies3
       - ${PLEX_MOVIES4}:/data/movies4
       - ${PLEX_MOVIES5}:/data/movies5
-      - ${PLEX_TVSHOWS1}:/data/tvshows1
-      - ${PLEX_TVSHOWS2}:/data/tvshows2
-      - ${PLEX_ANIME1}:/data/anime
+      - ${PLEX_MOVIES6}:/data/movies6
+      - ${PLEX_MOVIES7}:/data/movies7
+      - ${PLEX_MOVIES8}:/data/movies8
+        #- ${PLEX_TVSHOWS1}:/data/tvshows1
+        #- ${PLEX_ANIME1}:/data/anime
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.plex.entrypoints=web"
@@ -42,35 +53,35 @@ services:
       - "traefik.docker.network=web"
     restart: always
 
-  ombi:
-    hostname: ombi
-    container_name: ombi
-    image: linuxserver/ombi
-    networks:
-      - internal
-      - web
-    environment:
-      - PUID=${USER_ID}
-      - PGID=${GROUP_ID}
-      - TZ=${TZ}
-    volumes:
-      - /mnt/configs/ombi/config:/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ombi.entrypoints=web"
-      - "traefik.http.routers.ombi.rule=Host(`${SUBDOMAIN_OMBI}.${DOMAIN_NAME}`)"
-      - "traefik.http.middlewares.ombi-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.ombi.middlewares=ombi-https-redirect"
-      - "traefik.http.routers.ombi-secure.entrypoints=web-secure"
-      - "traefik.http.routers.ombi-secure.rule=Host(`${SUBDOMAIN_OMBI}.${DOMAIN_NAME}`)"
-      - "traefik.http.routers.ombi-secure.tls=true"
-      - "traefik.http.routers.ombi-secure.tls.certresolver=default"
-      - "traefik.http.routers.ombi-secure.service=ombi"
-      - "traefik.http.services.ombi.loadbalancer.server.port=3579"
-      - "traefik.docker.network=web"
-    depends_on:
-      - plex
-    restart: always
+    #  ombi:
+    #    hostname: ombi
+    #    container_name: ombi
+    #    image: linuxserver/ombi
+    #    networks:
+    #      - internal
+    #      - web
+    #    environment:
+    #      - PUID=${USER_ID}
+    #      - PGID=${GROUP_ID}
+    #      - TZ=${TZ}
+    #    volumes:
+    #      - /media/cache/ombi/config:/config
+    #    labels:
+    #      - "traefik.enable=true"
+    #      - "traefik.http.routers.ombi.entrypoints=web"
+    #      - "traefik.http.routers.ombi.rule=Host(`${SUBDOMAIN_OMBI}.${DOMAIN_NAME}`)"
+    #      - "traefik.http.middlewares.ombi-https-redirect.redirectscheme.scheme=https"
+    #      - "traefik.http.routers.ombi.middlewares=ombi-https-redirect"
+    #      - "traefik.http.routers.ombi-secure.entrypoints=web-secure"
+    #      - "traefik.http.routers.ombi-secure.rule=Host(`${SUBDOMAIN_OMBI}.${DOMAIN_NAME}`)"
+    #      - "traefik.http.routers.ombi-secure.tls=true"
+    #      - "traefik.http.routers.ombi-secure.tls.certresolver=default"
+    #      - "traefik.http.routers.ombi-secure.service=ombi"
+    #      - "traefik.http.services.ombi.loadbalancer.server.port=3579"
+    #      - "traefik.docker.network=web"
+    #    depends_on:
+    #      - plex
+    #    restart: always
 
   tautulli:
     hostname: tautulli
@@ -84,8 +95,8 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TZ}
     volumes:
-      - /mnt/configs/tautulli/config:/config
-      - /mnt/configs/plex/config/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+      - /media/cache/tautulli/config:/config
+      - /media/cache/plex/config/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tautulli.entrypoints=web"
