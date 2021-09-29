@@ -1,3 +1,5 @@
 .env
+acme.json.bak.json
+acme.json.dryrun.json
 acme.json
 /varken/configs

@@ -24,7 +24,7 @@ services:
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
       - "traefik.docker.network=web"
     volumes:
-      - $PWD/configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - $PWD/cache/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
 
   cadvisor:

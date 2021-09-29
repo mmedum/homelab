@@ -4,14 +4,14 @@ services:
   portainer:
     hostname: portainer
     container_name: portainer
-    image: portainer/portainer
+    image: portainer/portainer-ce
     networks:
       - web
     environment:
       - TZ=${TZ}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /mnt/configs/portainer/data:/data
+      - /media/cache/portainer/data:/data
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.entrypoints=web"

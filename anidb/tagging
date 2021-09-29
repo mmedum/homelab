@@ -8,8 +8,8 @@
 #                                                                                                              #
 ################################################################################################################
 
-BaseTVShowPath:="/mnt/storage7/anime/new/tvshows/"                       #Set to your root folder for anime TV shows
-BaseMoviePath:="/mnt/storage7/anime/new/movies/"                          #Set to your root folder for anime movies
+BaseTVShowPath:="/media/storage7/anime/new/tvshows/"                       #Set to your root folder for anime TV shows
+BaseMoviePath:="/media/storage7/anime/new/movies/"                          #Set to your root folder for anime movies
 
 #################################################### TITLES ####################################################
 #                                                                                                              #

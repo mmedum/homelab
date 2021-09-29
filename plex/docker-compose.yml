@@ -36,8 +36,10 @@ services:
       - ${PLEX_MOVIES6}:/data/movies6
       - ${PLEX_MOVIES7}:/data/movies7
       - ${PLEX_MOVIES8}:/data/movies8
-        #- ${PLEX_TVSHOWS1}:/data/tvshows1
-        #- ${PLEX_ANIME1}:/data/anime
+      - ${PLEX_TVSHOWS1}:/data/tvshows1
+      - ${PLEX_TVSHOWS2}:/data/tvshows2
+      - ${PLEX_ANIME_TVSHOWS}:/data/animetvshows
+      - ${PLEX_ANIME_MOVIES}:/data/animemovies
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.plex.entrypoints=web"
