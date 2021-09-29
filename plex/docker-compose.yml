@@ -5,26 +5,28 @@ services:
     hostname: plex
     container_name: plex
     image: plexinc/pms-docker
+    devices:
+      - /dev/nvidia0:/dev/nvidia0
+      - /dev/nvidiactl:/dev/nvidiactl
+      - /dev/nvidia-modeset:/dev/nvidia-modeset
+      - /dev/nvidia-uvm:/dev/nvidia-uvm
+      - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tool
     networks:
       - internal
       - web
     environment:
-      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - PLEX_CLAIM=${PLEX_TOKEN}
       - PLEX_UID=${USER_ID}
       - PLEX_GID=${GROUP_ID}
       - TZ=${TZ}
       - ADVERTISE_IP=https://${PLEX_IP}:32400,https://${SUBDOMAIN_PLEX}.${DOMAIN_NAME}:443
-    devices:
-      - /dev/dri:/dev/dri
     deploy:
       resources:
         reservations:
           devices:
-          - driver: nvidia
-            count: all
-            capabilities: [gpu]
+          - capabilities: [gpu]
     volumes:
       - /media/cache/plex/config:/config
       - /media/cache/plex/transcode:/transcode
